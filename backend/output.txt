@@ -1,0 +1,99 @@
+=== DUPLICATE CHECK ===
+Duplicate (Turbine_ID, Timestamp) rows: 48
+
+=== FULL MISSING VALUE SCAN (all 84 columns) ===
+                     missing_count  missing_pct
+Gen_Bear_Temp_Avg                4          0.0
+Grd_Prod_CosPhi_Avg              4          0.0
+
+=== SUSPECTED SENSOR-CEILING VALUES ===
+  Gen_Bear_Temp_Avg         rows at exactly 205: 101 (0.024%)
+  Gen_Bear2_Temp_Avg        rows at exactly 205: 118 (0.028%)
+  Gen_Phase1_Temp_Avg       rows at exactly 205: 102 (0.024%)
+  Gen_Phase2_Temp_Avg       rows at exactly 205: 101 (0.024%)
+  Gen_Phase3_Temp_Avg       rows at exactly 205: 101 (0.024%)
+
+=== APPLYING CLEANING ===
+Dropped 48 duplicate rows.
+Flagged 101 sensor-ceiling values in Gen_Bear_Temp_Avg as missing.
+Flagged 118 sensor-ceiling values in Gen_Bear2_Temp_Avg as missing.
+Flagged 102 sensor-ceiling values in Gen_Phase1_Temp_Avg as missing.
+Flagged 101 sensor-ceiling values in Gen_Phase2_Temp_Avg as missing.
+Flagged 101 sensor-ceiling values in Gen_Phase3_Temp_Avg as missing.
+Flagged 2 sensor-ceiling values in Grd_Prod_ReactPwr_Avg as missing.
+Remaining missing values after interpolation: 0
+
+Final shape after cleaning: (417093, 84)
+
+=== LOCATING REMAINING NULLS AFTER CLEANING ===
+By column:
+ Series([], dtype: int64)
+
+=== NON-OPERATIONAL DATA DIAGNOSIS ===
+Rows flagged as non-operational: 10161 (2.44% of data)
+
+By turbine:
+Turbine_ID
+T07    4102
+T06    2512
+T01    2496
+T11    1051
+Name: count, dtype: int64
+
+Sample flagged rows (wind speed, power):
+     Turbine_ID                 Timestamp  Amb_WindSpeed_Avg  Grd_Prod_Pwr_Avg
+283         T01 2016-01-02 23:10:00+00:00                3.5              -4.6
+284         T01 2016-01-02 23:20:00+00:00                4.1              -4.5
+285         T01 2016-01-02 23:30:00+00:00                3.9              -4.6
+848         T01 2016-01-06 21:20:00+00:00                3.5              -5.0
+916         T01 2016-01-07 08:40:00+00:00                3.5             -10.7
+1304        T01 2016-01-10 01:20:00+00:00                3.6              -3.9
+1555        T01 2016-01-11 19:10:00+00:00                4.0             -11.1
+1923        T01 2016-01-14 08:30:00+00:00                3.6              -7.9
+2187        T01 2016-01-16 04:30:00+00:00                3.6              -2.7
+2210        T01 2016-01-16 08:20:00+00:00                3.5              -3.4
+
+is_operational flag added. Operational: 406932, Non-operational: 10161
+
+Normalization complete. Added 22 normalized columns.
+Scaler saved to C:\Users\HP\aerosight-ai\backend\app\ml\saved\scaler.pkl
+
+Final dataset shape (with normalized columns): (417093, 107)
+  Turbine_ID  Amb_WindSpeed_Avg  Amb_WindSpeed_Avg_norm
+0        T01                3.3               -0.751239
+1        T01                3.2               -0.779302
+2        T01                4.3               -0.470606
+3        T01                4.4               -0.442543
+4        T01                4.1               -0.526732
+
+=== TIMESTAMP CONTINUITY CHECK ===
+  T01: expected 105264 intervals, have 104671, missing 593 (0.56%)
+  T06: expected 105264 intervals, have 102909, missing 2355 (2.24%)
+  T07: expected 105264 intervals, have 104727, missing 537 (0.51%)
+  T11: expected 105264 intervals, have 104786, missing 478 (0.45%)
+
+=== NORMALIZED COLUMN SANITY CHECK ===
+Infinite values in normalized columns: 0
+NaN values in normalized columns: 0
+Normalized value ranges (min to max across all norm columns): -6.28 to 13.94
+
+=== LOCATING EXTREME NORMALIZED OUTLIER ===
+Worst column: Grd_Prod_ReactPwr_Avg_norm (z-score = 13.94)
+
+Raw value in that row: Grd_Prod_ReactPwr_Avg = 998.2
+Turbine: T06, Timestamp: 2016-07-22 16:20:00+00:00
+is_operational: True
+
+Overall stats for Grd_Prod_ReactPwr_Avg (operational rows only):
+count    406932.000000
+mean        -97.242509
+std          78.578391
+min        -590.900000
+25%        -167.100000
+50%         -98.500000
+75%          -9.200000
+max         998.200000
+Name: Grd_Prod_ReactPwr_Avg, dtype: float64
+
+Saved full processed dataset: C:\Users\HP\aerosight-ai\backend\data\processed\processed_scada_full.parquet — shape (417093, 106)
+Saved training-ready dataset: C:\Users\HP\aerosight-ai\backend\data\processed\training_ready.parquet — shape (406932, 24)
