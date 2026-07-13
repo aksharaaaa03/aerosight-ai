@@ -1,5 +1,5 @@
 # Data files - too large for GitHub, regenerated/uploaded separately
-backend/data/
+backend/data/raw
 
 # Python
 backend/venv/
