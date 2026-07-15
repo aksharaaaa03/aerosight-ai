@@ -13,6 +13,7 @@ app = FastAPI(title="SCADA Sentinel")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
+    allow_origin_regex=r"https://aerosight.*\.vercel\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )
