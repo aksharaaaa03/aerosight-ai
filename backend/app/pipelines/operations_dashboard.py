@@ -210,44 +210,32 @@ def get_recent_events(turbine_id: str = None, start_date: str = None,
     return events_df.to_dict(orient="records")
 
 @lru_cache(maxsize=1)
-def load_raw_sensor_data() -> pd.DataFrame:
-    needed_columns = ["Turbine_ID", "Timestamp"] + HEALTH_FEATURES + ["Grd_Prod_Pwr_Avg"]
-    df = pd.read_parquet(PROCESSED_DIR / "processed_scada_full.parquet", columns=needed_columns)
+def load_raw_sensor_data(turbine_id: str, columns: list[str]) -> pd.DataFrame:
+    needed_columns = ["Turbine_ID", "Timestamp"] + columns
+    df = pd.read_parquet(
+        PROCESSED_DIR / "processed_scada_full.parquet",
+        columns=needed_columns,
+        filters=[("Turbine_ID", "==", turbine_id)],
+    )
     df = df.rename(columns={"Turbine_ID": "turbine_id", "Timestamp": "timestamp"})
     return df
 
 def get_sensor_trends(turbine_id: str, sensors: list[str] = None,
                        start_date: str = None, end_date: str = None,
                        resample: str = "h") -> dict:
-    """
-    Returns sensor trend data for one turbine, filtered by date range and
-    resampled for readability.
+    if sensors is None:
+        sensors = HEALTH_FEATURES
+    else:
+        invalid = [s for s in sensors if s not in HEALTH_FEATURES and s != "Grd_Prod_Pwr_Avg"]
+        if invalid:
+            raise ValueError(f"Unknown sensor(s) requested: {invalid}")
 
-    Sensor selection reuses HEALTH_FEATURES (Epic 2's model input list) and
-    SENSOR_TO_CATEGORY (Epic 4's root-cause grouping), rather than picking a
-    fresh set of "important" sensors - keeps Epic 6 consistent with the
-    reasoning already justified in Epics 2 and 4, instead of introducing an
-    unexplained third sensor list.
-
-    Resampling default is hourly ('H'), not raw 10-min data. This mirrors the
-    lesson learned in Epic 5: raw 10-min readings are too noisy for a stable
-    trend line (confirmed directly - a linear regression fit on raw points
-    flipped sign between adjacent lookback windows). Epic 2's dashboard already
-    uses daily smoothing for the same reason. Hourly is a middle ground here:
-    coarser than raw (readable over multi-week ranges) but finer than daily
-    (still shows real intra-day variation, unlike daily averaging which we
-    already found erases short sustained dips - see Epic 5's p5 vs daily-min
-    diagnosis). Caller can request resample='raw' to get unaveraged data if
-    genuinely needed (e.g. zooming into a single fault event).
-    """
-    df = load_raw_sensor_data()
-    df = df[df["turbine_id"] == turbine_id]
+    df = load_raw_sensor_data(turbine_id, sensors)
 
     if start_date:
         df = df[df["timestamp"] >= pd.Timestamp(start_date, tz="UTC")]
     if end_date:
         df = df[df["timestamp"] <= pd.Timestamp(end_date, tz="UTC")]
-
     if sensors is None:
         sensors = HEALTH_FEATURES
     else:
