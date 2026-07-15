@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 from app.pipelines.fault_analysis import SENSOR_TO_CATEGORY
 from app.pipelines.health_model import HEALTH_FEATURES
+from functools import lru_cache
 
 PROCESSED_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "processed"
 MODELS_DIR = Path(__file__).resolve().parent.parent / "ml" / "saved"
@@ -12,12 +13,12 @@ MODELS_DIR = Path(__file__).resolve().parent.parent / "ml" / "saved"
 GLOBAL_NOW = pd.Timestamp("2017-12-31 23:50:00", tz="UTC")
 ACTIVE_WINDOW_DAYS = 14
 
-
+@lru_cache(maxsize=1)
 def load_health_data() -> pd.DataFrame:
     df = pd.read_parquet(PROCESSED_DIR / "health_scored.parquet")
     df = df.rename(columns={"Turbine_ID": "turbine_id", "Timestamp": "timestamp"})
     return df
-
+@lru_cache(maxsize=1)
 def load_thresholds() -> dict:
     with open(MODELS_DIR / "health_thresholds.json") as f:
         return json.load(f)
@@ -61,14 +62,14 @@ def load_fault_events() -> pd.DataFrame:
     df["end_time"] = pd.to_datetime(df["end_time"])
     return df
 
-
+@lru_cache(maxsize=1)
 def load_performance_alerts() -> pd.DataFrame:
     df = pd.read_parquet(PROCESSED_DIR / "performance_alerts.parquet")
     df["start_time"] = pd.to_datetime(df["start_time"])
     df["end_time"] = pd.to_datetime(df["end_time"])
     return df
 
-
+@lru_cache(maxsize=1)
 def load_maintenance_forecast() -> pd.DataFrame:
     return pd.read_parquet(PROCESSED_DIR / "maintenance_forecast.parquet")
 
