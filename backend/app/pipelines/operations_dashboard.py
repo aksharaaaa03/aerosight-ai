@@ -209,9 +209,10 @@ def get_recent_events(turbine_id: str = None, start_date: str = None,
 
     return events_df.to_dict(orient="records")
 
-
+@lru_cache(maxsize=1)
 def load_raw_sensor_data() -> pd.DataFrame:
-    df = pd.read_parquet(PROCESSED_DIR / "processed_scada_full.parquet")
+    needed_columns = ["Turbine_ID", "Timestamp"] + HEALTH_FEATURES + ["Grd_Prod_Pwr_Avg"]
+    df = pd.read_parquet(PROCESSED_DIR / "processed_scada_full.parquet", columns=needed_columns)
     df = df.rename(columns={"Turbine_ID": "turbine_id", "Timestamp": "timestamp"})
     return df
 
