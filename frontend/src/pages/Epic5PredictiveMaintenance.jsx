@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 
-const API_BASE = 'http://localhost:8000/api/epic5'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/api/epic5`
 
 const riskColor = { High: '#EF4444', Medium: '#F59E0B', Low: '#22C55E' }
 

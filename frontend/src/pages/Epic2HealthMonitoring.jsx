@@ -3,7 +3,7 @@ import axios from 'axios'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import KpiCard from '../components/KpiCard'
 
-const API_BASE = 'http://localhost:8000/api/epic2'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/api/epic2`
 
 function Epic2HealthMonitoring() {
   const [fleetSummary, setFleetSummary] = useState(null)

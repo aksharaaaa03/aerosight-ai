@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import KpiCard from '../components/KpiCard'
 
-const API_BASE = 'http://localhost:8000/business-impact'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/business-impact`
 
 function formatEur(value) {
   return new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value)

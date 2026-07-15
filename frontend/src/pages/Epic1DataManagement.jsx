@@ -3,7 +3,7 @@ import axios from 'axios'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import KpiCard from '../components/KpiCard'
 
-const API_BASE = 'http://localhost:8000/api/epic1'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/api/epic1`
 
 function Epic1DataManagement() {
   const [summary, setSummary] = useState(null)

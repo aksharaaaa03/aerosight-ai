@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts'
 
-const API_BASE = 'http://localhost:8000/api/epic4'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/api/epic4`
 
 function Epic4FaultAnalysis() {
   const [rootCauseSummary, setRootCauseSummary] = useState(null)

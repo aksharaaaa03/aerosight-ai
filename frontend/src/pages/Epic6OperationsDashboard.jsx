@@ -3,7 +3,7 @@ import axios from 'axios'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import KpiCard from '../components/KpiCard'
 
-const API_BASE = 'http://localhost:8000/operations'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/operations`
 
 function statusColor(status) {
   if (status === 'Healthy') return '#34D399'

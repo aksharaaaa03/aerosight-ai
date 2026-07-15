@@ -3,7 +3,7 @@ import axios from 'axios'
 import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import KpiCard from '../components/KpiCard'
 
-const API_BASE = 'http://localhost:8000/api/epic3'
+const API_BASE = `${import.meta.env.VITE_API_BASE}/api/epic3`
 
 function Epic3PowerPerformance() {
   const [summary, setSummary] = useState(null)
