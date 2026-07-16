@@ -209,7 +209,7 @@ def get_recent_events(turbine_id: str = None, start_date: str = None,
 
     return events_df.to_dict(orient="records")
 
-@lru_cache(maxsize=1)
+
 def load_raw_sensor_data(turbine_id: str, columns: list[str]) -> pd.DataFrame:
     needed_columns = ["Turbine_ID", "Timestamp"] + columns
     df = pd.read_parquet(
